@@ -85,16 +85,18 @@ if __name__ == '__main__':
 
     try:
         for repo in repos["repos"]:
-            if os.path.exists(repo["name"]):
+            if not os.path.exists(repo["owner"]["login"]):
+                os.makedirs(repo["owner"]["login"], exist_ok=True)
+            if os.path.exists("%s/%s" % (repo["owner"]["login"], repo["name"])):
                 if options.pull:
-                    print("   [>] Pulling %s" % repo['name'])
-                    shell_exec("cd ./%s; git pull --force 2>&1" % repo["name"], verbose=options.verbose)
+                    print("   [>] Pulling %s/%s" % (repo["owner"]["login"], repo["name"]))
+                    shell_exec("cd ./%s/%s; git pull --force 2>&1" % (repo["owner"]["login"], repo["name"]), verbose=options.verbose)
                 else:
-                    print("   [>] Cloning %s" % repo['name'])
-                    print("      [!] Repository %s already exists locally, use --pull to update it.")
+                    print("   [>] Cloning %s/%s" % (repo["owner"]["login"], repo["name"]))
+                    print("      [!] Repository %s/%s already exists locally, use --pull to update it." % (repo["owner"]["login"], repo["name"]))
             else:
-                print("   [>] Cloning %s" % repo['name'])
-                shell_exec("git clone %s 2>&1" % github_http_to_ssh_link(repo['html_url']), verbose=options.verbose)
+                print("   [>] Cloning %s/%s" % (repo["owner"]["login"], repo["name"]))
+                shell_exec("cd ./%s; git clone %s 2>&1" % (repo["owner"]["login"], github_http_to_ssh_link(repo['html_url'])), verbose=options.verbose)
     except KeyboardInterrupt as e:
         pass
 
