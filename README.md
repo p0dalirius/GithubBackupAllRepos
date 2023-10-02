@@ -1,4 +1,4 @@
-# GithubBackupAllRepos
+![](./.github/banner.png)
 
 <p align="center">
   A Python script to backup all repos (public or private) of a user.
